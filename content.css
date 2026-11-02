@@ -179,3 +179,37 @@
     white-space: pre-wrap;
     word-break: break-word;
   }
+
+  
+/* ============================================================
+   Filtros de distração (Etapa 04)
+   Aplicados quando o <body> tem as classes:
+   ytn-hide-shorts / ytn-hide-comments /
+   ytn-hide-recommended / ytn-hide-endscreen
+   ============================================================ */
+
+/* Shorts */
+body.ytn-hide-shorts ytd-reel-shelf-renderer,
+body.ytn-hide-shorts ytd-rich-shelf-renderer[is-shorts],
+body.ytn-hide-shorts ytd-guide-entry-renderer a[title="Shorts"],
+body.ytn-hide-shorts ytd-mini-guide-entry-renderer[aria-label="Shorts"] {
+  display: none !important;
+}
+
+/* Comentários */
+body.ytn-hide-comments #comments,
+body.ytn-hide-comments ytd-comments {
+  display: none !important;
+}
+
+/* Recomendados (lateral) */
+body.ytn-hide-recommended #secondary,
+body.ytn-hide-recommended ytd-watch-next-secondary-results-renderer {
+  display: none !important;
+}
+
+/* Tela final (cards sobrepostos no fim do vídeo) */
+body.ytn-hide-endscreen .ytp-ce-element,
+body.ytn-hide-endscreen .ytp-endscreen-content {
+  display: none !important;
+}

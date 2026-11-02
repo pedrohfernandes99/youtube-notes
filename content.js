@@ -214,3 +214,30 @@ function getVideoId() {
   } else {
     init();
   }
+
+  
+// ============================================================
+// Filtros de distração (Etapa 04)
+// Lê as preferências do chrome.storage.sync e aplica
+// classes no <body>. O CSS do content.css faz o resto.
+// ============================================================
+
+function applyFilters(settings) {
+    settings = settings || {};
+    document.body.classList.toggle('ytn-hide-shorts', !!settings.hideShorts);
+    document.body.classList.toggle('ytn-hide-comments', !!settings.hideComments);
+    document.body.classList.toggle('ytn-hide-recommended', !!settings.hideRecommended);
+    document.body.classList.toggle('ytn-hide-endscreen', !!settings.hideEndscreen);
+  }
+  
+  // 1) Aplica ao carregar a página
+  chrome.storage.sync.get(['settings'], (res) => {
+    applyFilters(res.settings);
+  });
+  
+  // 2) Escuta mudanças no storage em tempo real (popup altera, aqui reflete)
+  chrome.storage.onChanged.addListener((changes, area) => {
+    if (area === 'sync' && changes.settings) {
+      applyFilters(changes.settings.newValue);
+    }
+  });
