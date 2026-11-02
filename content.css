@@ -1,0 +1,181 @@
+/* ============================================================
+   Botão flutuante 📝
+   ============================================================ */
+   #yt-notes-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 100001;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    border: none;
+    background: #ff0000;
+    color: #fff;
+    font-size: 22px;
+    cursor: pointer;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+    transition: right 0.3s ease;
+  }
+  
+  /* Quando o painel abre, empurra o botão para a esquerda */
+  body.ytn-panel-open #yt-notes-btn {
+    right: 380px;
+  }
+  
+  /* ============================================================
+     Painel lateral
+     ============================================================ */
+  #ytn-panel {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 360px;
+    height: 100vh;
+    background: #212121;
+    color: #eee;
+    z-index: 100000;
+    overflow-y: auto;
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+    font-family: Roboto, Arial, sans-serif;
+    font-size: 14px;
+    box-shadow: -2px 0 10px rgba(0, 0, 0, 0.5);
+  }
+  
+  /* Quando tem a classe ytn-open, desliza para dentro */
+  #ytn-panel.ytn-open {
+    transform: translateX(0);
+  }
+  
+  /* Cabeçalho */
+  .ytn-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 16px;
+    background: #181818;
+    font-weight: bold;
+    font-size: 16px;
+    border-bottom: 1px solid #303030;
+  }
+  .ytn-header button {
+    background: transparent;
+    border: none;
+    color: #eee;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  
+  /* Barra de ferramentas (adicionar nota / exportar) */
+  .ytn-toolbar {
+    display: flex;
+    gap: 8px;
+    padding: 10px 16px;
+  }
+  .ytn-toolbar button {
+    flex: 1;
+    padding: 8px;
+    border: none;
+    border-radius: 6px;
+    background: #ff0000;
+    color: #fff;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  .ytn-toolbar button:hover {
+    background: #cc0000;
+  }
+  
+  /* Formulário de nova nota */
+  .ytn-new-note {
+    padding: 10px 16px;
+    background: #2a2a2a;
+    border-top: 1px solid #303030;
+    border-bottom: 1px solid #303030;
+  }
+  .ytn-new-note #ytn-new-time {
+    display: inline-block;
+    background: #ff0000;
+    color: #fff;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: bold;
+    margin-bottom: 6px;
+  }
+  .ytn-new-note textarea {
+    width: 100%;
+    box-sizing: border-box;
+    min-height: 60px;
+    background: #181818;
+    color: #eee;
+    border: 1px solid #444;
+    border-radius: 6px;
+    padding: 8px;
+    font-family: inherit;
+    resize: vertical;
+  }
+  .ytn-new-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 6px;
+  }
+  .ytn-new-actions button {
+    flex: 1;
+    padding: 6px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  #ytn-save-note {
+    background: #ff0000;
+    color: #fff;
+  }
+  #ytn-cancel-note {
+    background: #444;
+    color: #eee;
+  }
+  
+  /* Lista de notas */
+  #ytn-notes-list {
+    padding: 10px 16px;
+  }
+  .ytn-empty {
+    color: #888;
+    text-align: center;
+    padding: 20px 0;
+  }
+  .ytn-note {
+    background: #2a2a2a;
+    border-radius: 8px;
+    padding: 10px;
+    margin-bottom: 10px;
+  }
+  .ytn-note-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+  }
+  .ytn-jump {
+    background: #ff0000;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 3px 10px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  .ytn-del {
+    background: transparent;
+    border: none;
+    color: #aaa;
+    cursor: pointer;
+    font-size: 16px;
+  }
+  .ytn-note p {
+    margin: 0;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
