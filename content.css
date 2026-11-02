@@ -213,3 +213,61 @@ body.ytn-hide-endscreen .ytp-ce-element,
 body.ytn-hide-endscreen .ytp-endscreen-content {
   display: none !important;
 }
+
+
+/* ============================================================
+   Ferramentas (Etapa 05) — velocidade + loop A-B
+   ============================================================ */
+   .ytn-tools {
+    padding: 16px;
+    border-top: 1px solid #303030;
+    margin-top: 8px;
+  }
+  
+  .ytn-tools h3 {
+    margin: 0 0 10px;
+    font-size: 14px;
+    color: #aaa;
+    font-weight: normal;
+  }
+  
+  .ytn-label {
+    display: block;
+    margin-bottom: 4px;
+    font-size: 13px;
+  }
+  
+  #ytn-speed {
+    width: 100%;
+    margin-bottom: 14px;
+    accent-color: #ff0000;
+  }
+  
+  .ytn-ab {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 8px;
+  }
+  
+  .ytn-ab button {
+    flex: 1;
+    min-width: 70px;
+    padding: 6px;
+    border: none;
+    border-radius: 6px;
+    background: #444;
+    color: #eee;
+    cursor: pointer;
+    font-size: 12px;
+  }
+  
+  .ytn-ab button:hover {
+    background: #555;
+  }
+  
+  .ytn-ab-info {
+    font-size: 12px;
+    color: #aaa;
+    text-align: center;
+  }

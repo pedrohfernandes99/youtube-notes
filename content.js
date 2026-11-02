@@ -1,5 +1,5 @@
 // ============================================================
-// YouTube Focus — Content Script (Etapa 03: painel + notas)
+// YouTube Focus — Content Script (Etapa 05)
 // ============================================================
 
 // ---------- 1. Utilitários ----------
@@ -37,6 +37,9 @@ function getVideoId() {
   // ---------- 2. Estado ----------
   let currentVideoId = null;
   let notesCache = [];
+  let abA = null;        
+  let abB = null;        
+  let abLooping = false; 
   
   // ---------- 3. Injetar botão + painel ----------
   function injectUI() {
@@ -66,17 +69,84 @@ function getVideoId() {
       '    <button id="ytn-cancel-note">Cancelar</button>' +
       '  </div>' +
       '</div>' +
-      '<div id="ytn-notes-list"></div>';
+      '<div id="ytn-notes-list"></div>' +
+      '<div class="ytn-tools">' +
+      '  <h3>⚙ Ferramentas</h3>' +
+      '  <label class="ytn-label">Velocidade: <span id="ytn-speed-val">1.00x</span></label>' +
+      '  <input type="range" id="ytn-speed" min="0.25" max="3" step="0.25" value="1">' +
+      '  <div class="ytn-ab">' +
+      '    <button id="ytn-mark-a">Marcar A</button>' +
+      '    <button id="ytn-mark-b">Marcar B</button>' +
+      '    <button id="ytn-loop">Loop: OFF</button>' +
+      '    <button id="ytn-clear-ab">Limpar</button>' +
+      '  </div>' +
+      '  <div class="ytn-ab-info" id="ytn-ab-info">A: — | B: —</div>' +
+      '</div>';
     document.body.appendChild(panel);
   
+    // --- Eventos básicos ---
     document.getElementById('ytn-close').addEventListener('click', togglePanel);
     document.getElementById('ytn-add').addEventListener('click', openNewNoteForm);
     document.getElementById('ytn-export').addEventListener('click', exportMarkdown);
     document.getElementById('ytn-save-note').addEventListener('click', saveNewNote);
     document.getElementById('ytn-cancel-note').addEventListener('click', closeNewNoteForm);
+  
+    // --- Velocidade (Etapa 05) ---
+    document.getElementById('ytn-speed').addEventListener('input', () => {
+      const v = getVideo();
+      const rate = parseFloat(document.getElementById('ytn-speed').value);
+      if (v) v.playbackRate = rate;
+      document.getElementById('ytn-speed-val').textContent = rate.toFixed(2) + 'x';
+    });
+  
+    // --- Loop A-B (Etapa 05) ---
+    document.getElementById('ytn-mark-a').addEventListener('click', () => {
+      const v = getVideo();
+      if (v) {
+        abA = v.currentTime;
+        updateABInfo();
+      }
+    });
+  
+    document.getElementById('ytn-mark-b').addEventListener('click', () => {
+      const v = getVideo();
+      if (v) {
+        abB = v.currentTime;
+        updateABInfo();
+      }
+    });
+  
+    document.getElementById('ytn-loop').addEventListener('click', () => {
+      if (abA === null || abB === null) {
+        alert('Marque o ponto A e o ponto B primeiro.');
+        return;
+      }
+      if (abB <= abA) {
+        alert('O ponto B precisa estar depois do ponto A.');
+        return;
+      }
+      abLooping = !abLooping;
+      document.getElementById('ytn-loop').textContent = 'Loop: ' + (abLooping ? 'ON' : 'OFF');
+      if (abLooping) seekTo(abA);
+    });
+  
+    document.getElementById('ytn-clear-ab').addEventListener('click', () => {
+      abA = null;
+      abB = null;
+      abLooping = false;
+      document.getElementById('ytn-loop').textContent = 'Loop: OFF';
+      updateABInfo();
+    });
   }
   
-  // ---------- 4. Painel: abrir/fechar ----------
+  // ---------- 4. Atualização do Info AB ----------
+  function updateABInfo() {
+    document.getElementById('ytn-ab-info').textContent =
+      'A: ' + (abA !== null ? formatTime(abA) : '—') +
+      ' | B: ' + (abB !== null ? formatTime(abB) : '—');
+  }
+  
+  // ---------- 5. Painel: abrir/fechar ----------
   function togglePanel() {
     const p = document.getElementById('ytn-panel');
     const open = p.classList.toggle('ytn-open');
@@ -84,7 +154,7 @@ function getVideoId() {
     if (open) loadNotes(currentVideoId);
   }
   
-  // ---------- 5. Notas ----------
+  // ---------- 6. Notas ----------
   function loadNotes(videoId) {
     if (!videoId) return;
     const key = 'notes_' + videoId;
@@ -164,7 +234,6 @@ function getVideoId() {
     });
   }
   
-  // ---------- 6. Exportar Markdown ----------
   function exportMarkdown() {
     if (!notesCache.length) {
       alert('Não há notas para exportar.');
@@ -185,7 +254,7 @@ function getVideoId() {
     URL.revokeObjectURL(a.href);
   }
   
-  // ---------- 7. Detecção de troca de vídeo (YouTube é SPA) ----------
+  // ---------- 7. Detecção de troca de vídeo ----------
   function checkVideoChange() {
     const id = getVideoId();
     if (id && id !== currentVideoId) {
@@ -202,7 +271,34 @@ function getVideoId() {
   document.addEventListener('yt-navigate-finish', () => setTimeout(checkVideoChange, 500));
   setInterval(checkVideoChange, 1000);
   
-  // ---------- 8. Inicialização ----------
+  // ---------- 8. Filtros de distração (Etapa 04) ----------
+  function applyFilters(settings) {
+    settings = settings || {};
+    document.body.classList.toggle('ytn-hide-shorts', !!settings.hideShorts);
+    document.body.classList.toggle('ytn-hide-comments', !!settings.hideComments);
+    document.body.classList.toggle('ytn-hide-recommended', !!settings.hideRecommended);
+    document.body.classList.toggle('ytn-hide-endscreen', !!settings.hideEndscreen);
+  }
+  
+  chrome.storage.sync.get(['settings'], (res) => {
+    applyFilters(res.settings);
+  });
+  
+  chrome.storage.onChanged.addListener((changes, area) => {
+    if (area === 'sync' && changes.settings) {
+      applyFilters(changes.settings.newValue);
+    }
+  });
+  
+  // ---------- 9. Loop A-B (Etapa 05) ----------
+  document.addEventListener('timeupdate', (e) => {
+    if (e.target.tagName !== 'VIDEO') return;
+    if (abLooping && abA !== null && abB !== null && e.target.currentTime >= abB) {
+      e.target.currentTime = abA;
+    }
+  }, true);
+  
+  // ---------- 10. Inicialização ----------
   function init() {
     if (document.getElementById('yt-notes-btn')) return;
     injectUI();
@@ -214,30 +310,3 @@ function getVideoId() {
   } else {
     init();
   }
-
-  
-// ============================================================
-// Filtros de distração (Etapa 04)
-// Lê as preferências do chrome.storage.sync e aplica
-// classes no <body>. O CSS do content.css faz o resto.
-// ============================================================
-
-function applyFilters(settings) {
-    settings = settings || {};
-    document.body.classList.toggle('ytn-hide-shorts', !!settings.hideShorts);
-    document.body.classList.toggle('ytn-hide-comments', !!settings.hideComments);
-    document.body.classList.toggle('ytn-hide-recommended', !!settings.hideRecommended);
-    document.body.classList.toggle('ytn-hide-endscreen', !!settings.hideEndscreen);
-  }
-  
-  // 1) Aplica ao carregar a página
-  chrome.storage.sync.get(['settings'], (res) => {
-    applyFilters(res.settings);
-  });
-  
-  // 2) Escuta mudanças no storage em tempo real (popup altera, aqui reflete)
-  chrome.storage.onChanged.addListener((changes, area) => {
-    if (area === 'sync' && changes.settings) {
-      applyFilters(changes.settings.newValue);
-    }
-  });
