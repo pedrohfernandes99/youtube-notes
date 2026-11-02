@@ -81,6 +81,8 @@ function getVideoId() {
       '    <button id="ytn-clear-ab">Limpar</button>' +
       '  </div>' +
       '  <div class="ytn-ab-info" id="ytn-ab-info">A: — | B: —</div>' +
+      '  <button id="ytn-zen" class="ytn-zen-btn">🌙 Modo Zen</button>' +
+      '</div>';
       '</div>';
     document.body.appendChild(panel);
   
@@ -137,6 +139,11 @@ function getVideoId() {
       document.getElementById('ytn-loop').textContent = 'Loop: OFF';
       updateABInfo();
     });
+
+      // --- Modo Zen (Etapa 06) ---
+  document.getElementById('ytn-zen').addEventListener('click', () => {
+    document.body.classList.toggle('ytn-zen');
+  });
   }
   
   // ---------- 4. Atualização do Info AB ----------

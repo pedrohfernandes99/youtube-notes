@@ -271,3 +271,37 @@ body.ytn-hide-endscreen .ytp-endscreen-content {
     color: #aaa;
     text-align: center;
   }
+
+  /* ============================================================
+   Modo Zen (Etapa 06)
+   ============================================================ */
+body.ytn-zen {
+    background: #000 !important;
+  }
+  
+  /* Esconde cabeçalho, recomendados, comentários, descrição e controles */
+  body.ytn-zen ytd-masthead,
+  body.ytn-zen #secondary,
+  body.ytn-zen #comments,
+  body.ytn-zen ytd-watch-metadata,
+  body.ytn-zen #related,
+  body.ytn-zen .ytp-chrome-top,
+  body.ytn-zen .ytp-chrome-bottom {
+    display: none !important;
+  }
+  
+  /* Estilo do botão do Zen */
+  .ytn-zen-btn {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 6px;
+    background: #3a3a8c;
+    color: #fff;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 14px;
+  }
+  .ytn-zen-btn:hover {
+    background: #4a4aac;
+  }
