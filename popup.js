@@ -1,20 +1,19 @@
 // ============================================================
-// popup.js — Carrega e salva os filtros de distração
+// popup.js — Filtros de distração + Adblock (Etapa 07)
 // ============================================================
 
-const ids = ['hideShorts', 'hideComments', 'hideRecommended', 'hideEndscreen'];
+const filterIds = ['hideShorts', 'hideComments', 'hideRecommended', 'hideEndscreen'];
 
-// 1) Ao abrir o popup, marca os checkboxes com o que está salvo
+// --- 1. Carregar preferências de filtros ---
 chrome.storage.sync.get(['settings'], (res) => {
   const s = res.settings || {};
-  ids.forEach((id) => {
+  filterIds.forEach((id) => {
     document.getElementById(id).checked = !!s[id];
   });
 });
 
-// 2) Ao marcar/desmarcar, salva no chrome.storage.sync
-//    O content.js escuta essa mudança e aplica na hora
-ids.forEach((id) => {
+// --- 2. Salvar preferências de filtros ---
+filterIds.forEach((id) => {
   document.getElementById(id).addEventListener('change', () => {
     chrome.storage.sync.get(['settings'], (res) => {
       const s = res.settings || {};
@@ -23,3 +22,33 @@ ids.forEach((id) => {
     });
   });
 });
+
+// --- 3. Lógica do Adblock (Etapa 07) ---
+const adblockCheckbox = document.getElementById('adblockEnabled');
+
+// Carrega o estado salvo (padrão: ligado)
+chrome.storage.sync.get(['adblockEnabled'], (res) => {
+  const enabled = res.adblockEnabled !== false; // se for undefined, assume true
+  adblockCheckbox.checked = enabled;
+  updateAdblockRules(enabled);
+});
+
+// Escuta o clique no toggle
+adblockCheckbox.addEventListener('change', () => {
+  const enabled = adblockCheckbox.checked;
+  chrome.storage.sync.set({ adblockEnabled: enabled });
+  updateAdblockRules(enabled);
+});
+
+// Função que liga/desliga a regra estática no Chrome
+function updateAdblockRules(enabled) {
+  if (enabled) {
+    chrome.declarativeNetRequest.updateEnabledRulesets({
+      enableRulesetIds: ['youtube_ads']
+    });
+  } else {
+    chrome.declarativeNetRequest.updateEnabledRulesets({
+      disableRulesetIds: ['youtube_ads']
+    });
+  }
+}

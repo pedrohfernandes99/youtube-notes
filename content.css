@@ -305,3 +305,18 @@ body.ytn-zen {
   .ytn-zen-btn:hover {
     background: #4a4aac;
   }
+
+  /* ============================================================
+   Ocultação de anúncios (Etapa 07)
+   ============================================================ */
+ytd-ad-slot-renderer,
+ytd-display-ad-renderer,
+ytd-video-ad-renderer,
+ytd-promoted-sparkles-web-renderer,
+ytd-banner-promo-renderer,
+ytd-video-masthead-ad-v3-renderer,
+.ytp-ad-overlay-slot,
+.ytp-ad-progress-list,
+#player-ads {
+  display: none !important;
+}
