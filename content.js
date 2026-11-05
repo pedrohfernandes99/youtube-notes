@@ -317,3 +317,26 @@ function getVideoId() {
   } else {
     init();
   }
+
+  
+// ============================================================
+// Fallback para anúncios SSAP (Etapa 10)
+// Detecta o player em modo de anúncio e pula o tempo.
+// ============================================================
+function skipSSAPAds() {
+  const player = document.getElementById('movie_player');
+  if (!player) return;
+
+  // Verifica se o player está exibindo um anúncio
+  if (player.classList.contains('ad-showing')) {
+    const video = player.querySelector('video');
+    if (video && video.duration > 0) {
+      // Pula para o final do anúncio atual
+      video.currentTime = video.duration;
+      console.log('[YouTube Focus] Anúncio SSAP detectado e pulado.');
+    }
+  }
+}
+
+// Verifica a cada 1 segundo
+setInterval(skipSSAPAds, 1000);
